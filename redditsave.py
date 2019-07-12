@@ -1,16 +1,51 @@
 # redditsave.py
 
-import praw, os, config, pickle, shutil, sys
+import sys
+import os
+import pickle
+import shutil
+import logging
+import pathlib
+
+# importing config and PRAW
+import config
+import praw
 from praw.models import Submission
 
-__VERSION__ = '1.1.0'
-program = 'redditsave'
-user_agent = (
-    f'{sys.implementation.name}/{sys.version_info.major}.{sys.version_info.minor}'
-    f':{program}/{version} (by /u/{username})'
-)
+__version__ = '1.1.0'
+# program = 'redditsave'
+# user_agent = (
+    # f'{sys.implementation.name}/{sys.version_info.major}.{sys.version_info.minor}'
+    # f':{program}/{__VERSION__} (by /u/{config.username})'
+# )
 
-# importing configs and PRAW
+
+def make_ua():
+    # See https://github.com/reddit-archive/reddit/wiki/API
+    # <platform>:<app ID>:<version string> (by /u/<reddit username>)
+    # e.g. ua = 'Python/3.7:praw/:Test_1_App/1.0.0 (by /u/yaxriifgyn)'
+    python_version = f'{sys._git[0]}/{sys._git[1]}'
+    praw_version = f'praw/{praw.__version__}'
+    script = pathlib.Path(sys.argv[0]).stem
+    my_version = f'{script}/{__version__}'
+    return f'{python_version}:{praw_version}:{my_version} (by /u/yaxriifgyn)'
+
+user_agent = make_ua()
+print(f'user_agent = {user_agent}')
+
+# You must initialize logging, otherwise you'll not see debug output.
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
+requests_logger = logging.getLogger("requests.packages.urllib3")
+requests_logger.setLevel(logging.DEBUG)
+requests_logger.propagate = True
+
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+praw_logger = logging.getLogger('prawcore')
+praw_logger.setLevel(logging.DEBUG)
+praw_logger.addHandler(handler)
+
 reddit = praw.Reddit(
     client_id=config.client_id,
     client_secret=config.client_secret,
@@ -18,6 +53,24 @@ reddit = praw.Reddit(
     username=config.username,
     password=config.password,
 )
+
+print(f'read_only: {reddit.read_only}')
+# reddit.read_only = True
+# print(f'read_only: {reddit.read_only}')
+
+print(f'reddit: {reddit}')
+print(f'reddit.user: {reddit.user}')
+
+print(f'dir(reddit.user): {dir(reddit.user)}')
+
+user_keys = (k for k in dir(reddit.user) if not k.startswith('__'))
+for k, v in ((k, reddit.user.__getattribute__(k)) for k in user_keys):
+    print(f'\t{k}\t{v}')
+
+print(f'preferences: {reddit.user.preferences}')
+print(f'dir(preferences): {dir(reddit.user.preferences)}')
+
+print(f'reddit.user.me(): {reddit.user.me()}')
 
 # testing these functions
 def runn(post):
@@ -175,21 +228,18 @@ def partialfooter(file_name, ssub):
 def syncload():
     with open('sync.p', 'rb') as h:
         recent_id = str(pickle.load(h))
-        print('Now loading recently saved id:')
-        print(recent_id)
+        print(f'Now loading recently saved id: {recent_id}')
         return recent_id
 
 def syncdump(postid):
     with open('sync.p','wb') as f:
-        print('updating most recent id:')
-        print(postid)
+        print(f'updating most recent id: {postid}')
         pickle.dump(postid, f)
 
 def newrecent():
     saved = reddit.user.me().saved(limit=1)
     for post in saved:
-        print('recent id:')
-        print(post.id)
+        print(f'recent id: {post.id}')
         postid = str(post.id)
         return postid
 
@@ -225,6 +275,7 @@ def main():
 
 
     #check if file exists #if exists
+    print(f'sync.p = {os.path.abspath("sync.p")}')
     if (os.path.isfile('sync.p')):
         # if true get id
         print('Syncing')

@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Never, ever publish your config.py - it contains secrets and passwords
 config.py
 README.html
 

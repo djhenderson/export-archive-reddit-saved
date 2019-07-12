@@ -1,6 +1,7 @@
 # reddit client configuration file
 
 # *** DO NOT STORE config.py UNDER GIT VERSION CONTRO ***
+# Never, ever publish your config.py - it contains secrets and passwords
 
 # your client credentials
 # See (https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example)
