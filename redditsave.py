@@ -1,25 +1,30 @@
+# redditsave.py
+
 import praw, os, config, pickle, shutil
 from praw.models import Submission
 
 #importing configs and PRAW
-reddit = praw.Reddit(client_id=config.client_id,
-                     client_secret=config.client_secret,
-                     user_agent=config.user_agent,
-                     username=config.username,
-                     password=config.password)
+reddit = praw.Reddit(
+    client_id=config.client_id,
+    client_secret=config.client_secret,
+    user_agent=config.user_agent,
+    username=config.username,
+    password=config.password
+)
+
 #testing these functions
 def runn(post):
     if isinstance(post, Submission):
-            print('Post', post.id)
-            sub = str(post.subreddit)
-            file_name = sub + '.html'
-            partialhead(file_name, sub, '../assets/css/style.css')
-            h=open(file_name, 'a', encoding="utf-8")
-            h.write(Rh(Rs(post.subreddit_name_prefixed,'s'),1) + "\n")
-            # subs.append(sub)
-            post = newsyncpost(post)
-            h.write(post)
-            h.close()
+        print('Post', post.id)
+        sub = str(post.subreddit)
+        file_name = sub + '.html'
+        partialhead(file_name, sub, '../assets/css/style.css')
+        h=open(file_name, 'a', encoding="utf-8")
+        h.write(Rh(Rs(post.subreddit_name_prefixed,'s'),1) + "\n")
+        # subs.append(sub)
+        post = newsyncpost(post)
+        h.write(post)
+        h.close()
 
 def newsyncpost(post):
     print('Inside newsyncpost function')
@@ -72,11 +77,13 @@ def rerun(post):
         contents = "".join(contents)
         f.write(contents)
         f.close()
+
     else:
         print('New sub detected, creating new file')
         runn(post)
         new_sub_list.append(str(post.subreddit))
         print(new_sub_list)
+
     return new_sub_list
 
 #functions
@@ -95,12 +102,16 @@ def Rs(data,c):
     data = str(data)
     if c == 's':
         classid = 'class = "subreddit"'
+
     elif c == 'u':
         classid = 'class = "user"'
+
     elif c == 'c':
         classid = 'class = "numcomments"'
+
     else:
         None
+
     data = '<span '+ classid +'>'+ data +' </span>'
     return data
 
@@ -146,6 +157,7 @@ def partialfooter(file_name, ssub):
         h.close()
         l6 = '<li>' + Ra("subs/"+ a + ".html", 'r/' + a)+ '</li>' + "\n"
         f.write(l6)
+
     l7 = '        </ul>'
     l8 = '</div></div></div>'
     l9 = '<script src="assets/js/script.js"></script>'
@@ -195,6 +207,7 @@ if not os.path.exists(directory):
     if not os.path.exists(new_path):
         print('making new path')
         os.makedirs(new_path)
+
 os.chdir(new_path)
 print(os.getcwd())
 
@@ -213,7 +226,8 @@ if (os.path.isfile('sync.p')):
         if(recent_id == postid):
             #if compare is true break
             print('No new posts: terminating sync')
-            break;
+            break
+
         else:
             print('Syncing this id')
             new_subs = rerun(post)
@@ -250,39 +264,43 @@ else:
 
     #looping through all saved items
     for post in saved:
-            item_num += 1
-            allpostids.append(str(post.id))
-            if isinstance(post, Submission):
-                print('Post', item_num)
-                sub = str(post.subreddit)
-                file_name = sub + '.html'
-                h=open(file_name, 'a', encoding="utf-8")
-                if sub in subs:
-                    print('sub exists, appending')
-                else:
-                    #sub files append
-                    partialhead(file_name, sub, '../assets/css/style.css')
-                    h.write(Rh(Rs(post.subreddit_name_prefixed,'s'),1) + "\n")
-                    subs.append(sub)
-                h.write('<div class="post">' + '\n')
-                h.write(Rh(post.title,2) + '\n')
-                h.write(Rs('posted by: u/' + str(post.author) ,'u'))
-                h.write(Rs(str(post.num_comments) + ' comments', 'c'))
-                h.write(Ra(post.url, '(source)') + '\n')
-                h.write('<button onclick="toggles('+ str(item_num) +')">View full post</button>')
-                h.write('<div id="'+ str(item_num) +'" class="mdwrapper">')
-                if(post.selftext_html != None):
-                    h.write(post.selftext_html)
-                else:
-                    h.write('<p>NO BODY FOR THE POST</p>')
-                h.write('</div>')
-                h.write('\n</div>\n')
-                h.close()
+        item_num += 1
+        allpostids.append(str(post.id))
+        if isinstance(post, Submission):
+            print('Post', item_num)
+            sub = str(post.subreddit)
+            file_name = sub + '.html'
+            h=open(file_name, 'a', encoding="utf-8")
+            if sub in subs:
+                print('sub exists, appending')
 
             else:
-                print('comment will do something later')
-                print('Comment', item_num)
-                #see comment only, moved for clutter=>need to edit later
+                #sub files append
+                partialhead(file_name, sub, '../assets/css/style.css')
+                h.write(Rh(Rs(post.subreddit_name_prefixed,'s'),1) + "\n")
+                subs.append(sub)
+
+            h.write('<div class="post">' + '\n')
+            h.write(Rh(post.title,2) + '\n')
+            h.write(Rs('posted by: u/' + str(post.author) ,'u'))
+            h.write(Rs(str(post.num_comments) + ' comments', 'c'))
+            h.write(Ra(post.url, '(source)') + '\n')
+            h.write('<button onclick="toggles('+ str(item_num) +')">View full post</button>')
+            h.write('<div id="'+ str(item_num) +'" class="mdwrapper">')
+            if(post.selftext_html != None):
+                h.write(post.selftext_html)
+
+            else:
+                h.write('<p>NO BODY FOR THE POST</p>')
+
+            h.write('</div>')
+            h.write('\n</div>\n')
+            h.close()
+
+        else:
+            print('comment will do something later')
+            print('Comment', item_num)
+            #see comment only, moved for clutter=>need to edit later
 
     #sorting all sub reddits alphabetically
     ssub = sorted(subs,key=str.lower)
