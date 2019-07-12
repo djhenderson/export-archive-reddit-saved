@@ -1,2 +1,8 @@
-@py.exe %~dp0redditsave.py %*
-pause
+@echo off
+
+@setlocal
+@setlocal enableextensions
+
+@py.exe -3 %~dp0redditsave.py %*
+
+@pause

@@ -1,13 +1,20 @@
 # redditsave.py
 
-import praw, os, config, pickle, shutil
+import praw, os, config, pickle, shutil, sys
 from praw.models import Submission
+
+__VERSION__ = '1.1.0'
+program = 'redditsave'
+user_agent = (
+    f'{sys.implementation.name}/{sys.version_info.major}.{sys.version_info.minor}'
+    f':{program}/{version} (by /u/{username})'
+)
 
 #importing configs and PRAW
 reddit = praw.Reddit(
     client_id=config.client_id,
     client_secret=config.client_secret,
-    user_agent=config.user_agent,
+    user_agent=user_agent,
     username=config.username,
     password=config.password
 )

@@ -1,5 +1,12 @@
-client_id='clientid here'
-client_secret='client secret here'
-user_agent='user agent here'
-username='username here'
-password='password here'
+# reddit client configuration file
+
+# *** DO NOT STORE UNDER GIT VERSION CONTRO ***
+
+# your client credentials
+# See (https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example)
+client_id = 'clientid here'
+client_secret = 'client secret here'
+
+# Your reddit login credentials
+username = 'username here'
+password = 'password here'
