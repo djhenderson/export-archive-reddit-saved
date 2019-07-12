@@ -205,19 +205,22 @@ def main():
     print(f'loginuser: {loginuser}')
 
     # changing path
-    paths = r'C:\Users\'+ loginuser + r'\Desktop'
-    os.chdir(paths)
+    desktopPathname = 'C:\\Users\\' + loginuser + r'\Desktop'
+    if not os.path.exists(desktopPathname):
+        os.chdir(desktopPathname)
+        print(f'Created directory: {desktopPathname}')
+
     print(f'CD = {os.getcwd()}')
     print('changing directory to desktop and creating new folder')
 
-    directory = r'\Redditsaved'
-    new_path = paths + directory + r'\subs'
-    if not os.path.exists(directory):
-        if not os.path.exists(new_path):
-            print('making new path')
-            os.makedirs(new_path)
+    redditPathname = r'\Redditsaved'
+    subredditPathname = desktopPathname + redditPathname + r'\subs'
+    if not os.path.exists(subredditPathname):
+        print(f'Making directory(s): {subredditPathname}')
+        os.makedirs(subredditPathname)
 
-    os.chdir(new_path)
+    os.chdir(subredditPathname)
+
     print(f'CD = {os.getcwd()}')
 
 
@@ -282,7 +285,7 @@ def main():
                         print('sub exists, appending')
 
                     else:
-                        #sub files append
+                        # sub files append
                         partialhead(file_name, sub, '../assets/css/style.css')
                         h.write(Rh(Rs(post.subreddit_name_prefixed, 's'), 1) + '\n')
                         subs.append(sub)
@@ -311,19 +314,18 @@ def main():
         # sorting all sub reddits alphabetically
         ssub = sorted(subs, key=str.lower)
 
-        # landing page footer content and subs files foter
+        # landing page footer content and subs files footer
         partialfooter('Landing.html', ssub)
 
         # moving landing file to parent folder
         landingpath = os.getcwd()
         print(f'landingpath = {landingpath}')
         landingpath += r'\Landing.html'
-        shutil.move('Landing.html', paths + directory)
+        shutil.move('Landing.html', desktopPathname + redditPathname)
         os.chdir(r'..\..')
 
-        sauce = file_path
-        sauce += r'\assets'
-        destination = paths + directory + r'\assets'
+        sauce = file_path + r'\assets'
+        destination = desktopPathname + redditPathname + r'\assets'
         print(f'destination = {destination}')
         shutil.copytree(sauce, destination)
 

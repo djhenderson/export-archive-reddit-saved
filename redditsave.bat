@@ -3,6 +3,18 @@
 @setlocal
 @setlocal enableextensions
 
-@py.exe -3 %~dp0redditsave.py %*
+cd "%~dp0"
+echo CD = "%CD%"
 
-@pause
+if not exist C:\WINDOWS\py.exe (
+	echo Not found py.exe
+	goto :FAIL
+)
+C:\WINDOWS\py.exe -3 redditsave.py %*
+
+goto FINISH
+
+:FAIL
+
+:FINISH
+pause

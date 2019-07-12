@@ -1,6 +1,6 @@
 # reddit client configuration file
 
-# *** DO NOT STORE UNDER GIT VERSION CONTRO ***
+# *** DO NOT STORE config.py UNDER GIT VERSION CONTRO ***
 
 # your client credentials
 # See (https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example)
